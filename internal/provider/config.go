@@ -6,11 +6,16 @@ import (
 )
 
 type Config struct {
-	ApiKey string
+	ApiKey  string
+	BaseURL string
 }
 
 func (c *Config) NewClient() (*mackerel.Client, error) {
-	client := mackerel.NewClient(c.ApiKey)
+	client, err := mackerel.NewClientWithOptions(c.ApiKey, c.BaseURL, false)
+	if err != nil {
+		return nil, err
+	}
+
 	client.UserAgent = "Terraform for Mackerel"
 	if logging.IsDebugOrHigher() {
 		client.Verbose = true
